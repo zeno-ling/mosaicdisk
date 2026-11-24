@@ -37,20 +37,20 @@
 
 ## 下载预编译版
 
-无需安装 Rust，从 [v0.1.0 Release](https://github.com/zeno-ling/mosaicdisk/releases/tag/v0.1.0) 直接下载对应平台的绿色版，解压即用（内置简体中文语言包）：
+无需安装 Rust，从 [v0.1.1 Release](https://github.com/zeno-ling/mosaicdisk/releases/tag/v0.1.1) 直接下载对应平台的绿色版，解压即用（内置简体中文语言包，含基于内容的重复文件查找）：
 
 | 平台 | 架构 | 文件 |
 |---|---|---|
-| Windows | x86_64 | [安装包 MosaicDisk-0.1.0-windows-x64-setup.exe](https://github.com/zeno-ling/mosaicdisk/releases/download/v0.1.0/MosaicDisk-0.1.0-windows-x64-setup.exe)（可选开始菜单/桌面快捷方式与文件夹右键菜单） |
-| Windows | x86_64 | 绿色版 [MosaicDisk-0.1.0-windows-x64.zip](https://github.com/zeno-ling/mosaicdisk/releases/download/v0.1.0/MosaicDisk-0.1.0-windows-x64.zip) |
-| Linux | x86_64 | [MosaicDisk-0.1.0-linux-x64.tar.gz](https://github.com/zeno-ling/mosaicdisk/releases/download/v0.1.0/MosaicDisk-0.1.0-linux-x64.tar.gz) |
-| macOS | Apple Silicon (arm64) | [MosaicDisk-0.1.0-macos-arm64.tar.gz](https://github.com/zeno-ling/mosaicdisk/releases/download/v0.1.0/MosaicDisk-0.1.0-macos-arm64.tar.gz) |
-| macOS | Intel (x86_64) | [MosaicDisk-0.1.0-macos-x64.tar.gz](https://github.com/zeno-ling/mosaicdisk/releases/download/v0.1.0/MosaicDisk-0.1.0-macos-x64.tar.gz) |
+| Windows | x86_64 | [安装包 MosaicDisk-0.1.1-windows-x64-setup.exe](https://github.com/zeno-ling/mosaicdisk/releases/download/v0.1.1/MosaicDisk-0.1.1-windows-x64-setup.exe)（可选开始菜单/桌面快捷方式与文件夹右键菜单） |
+| Windows | x86_64 | 绿色版 [MosaicDisk-0.1.1-windows-x64.zip](https://github.com/zeno-ling/mosaicdisk/releases/download/v0.1.1/MosaicDisk-0.1.1-windows-x64.zip) |
+| Linux | x86_64 | [MosaicDisk-0.1.1-linux-x64.tar.gz](https://github.com/zeno-ling/mosaicdisk/releases/download/v0.1.1/MosaicDisk-0.1.1-linux-x64.tar.gz) |
+| macOS | Apple Silicon (arm64) | [MosaicDisk-0.1.1-macos-arm64.tar.gz](https://github.com/zeno-ling/mosaicdisk/releases/download/v0.1.1/MosaicDisk-0.1.1-macos-arm64.tar.gz) |
+| macOS | Intel (x86_64) | [MosaicDisk-0.1.1-macos-x64.tar.gz](https://github.com/zeno-ling/mosaicdisk/releases/download/v0.1.1/MosaicDisk-0.1.1-macos-x64.tar.gz) |
 
 在 Linux / macOS 上解压后运行：
 
 ```sh
-tar -xzf MosaicDisk-0.1.0-*.tar.gz
+tar -xzf MosaicDisk-0.1.1-*.tar.gz
 ./mosaicdisk
 ```
 
@@ -107,7 +107,7 @@ WT_SNAP_PATH=$HOME cargo test --release bench_views -- --ignored --nocapture
 脚本会依次完成：编译 release 二进制 → 复制中文语言包与文档 → 生成绿色版 `MosaicDisk-<版本>-windows-x64.zip` → 用 Inno Setup 编译安装程序 `MosaicDisk-<版本>-windows-x64-setup.exe` → 创建或更新 GitHub Release 并上传资产（同名资产自动覆盖）。安装程序需要 [Inno Setup](https://jrsoftware.org/isinfo.php)（`scoop install inno-setup`）；未安装时自动跳过，可用 `-NoInstaller` 显式跳过。可用参数：
 
 ```powershell
-.\scripts\release.ps1 -Version v0.1.0 -SkipBuild   # 跳过编译，用现有二进制重新打包
+.\scripts\release.ps1 -Version v0.1.1 -SkipBuild   # 跳过编译，用现有二进制重新打包
 .\scripts\release.ps1 -NoUpload                    # 只打包，不推送到 GitHub
 .\scripts\release.ps1 -NoInstaller                 # 不编译安装程序，只打 zip
 ```

@@ -1,6 +1,6 @@
 [package]
 name = "mosaicdisk"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2024"
 description = "Fast cross-platform disk space analyser with a cushion treemap and direct NTFS MFT scanning"
 license = "MIT"
