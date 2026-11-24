@@ -2,41 +2,26 @@
 
 # MosaicDisk
 
-A fast disk space analyser for Windows, Linux and macOS, written in Rust.
-Modelled on [WizTree](https://diskanalyzer.com): one quick scan, then a
-tree view, a cushion treemap and a searchable file list that all respond
-instantly.
+一款用 Rust 编写的快速磁盘空间分析器，支持 Windows、Linux 和 macOS。
+参照 [WizTree](https://diskanalyzer.com) 设计：一次快速扫描，随后树视图、软垫矩形树图和可搜索文件列表都能即时响应。
 
-![Tree view and treemap](docs/screenshot-tree.png)
+![树视图与矩形树图](docs/screenshot-tree.png)
 
-The disk is scanned once, in parallel, into a compact in-memory index. The
-tree view, treemap, file list, search, filters and duplicate finder all work
-from that index and never touch the disk again.
+磁盘只被并行扫描一次，结果存入紧凑的内存索引。树视图、矩形树图、文件列表、搜索、过滤和重复文件查找都基于这个索引工作，不会再访问磁盘。
 
-## Why it's fast on NTFS
+## 为什么在 NTFS 上这么快
 
-On NTFS drives (Windows, and Linux `ntfs3`/`ntfs-3g` mounts) MosaicDisk
-reads the Master File Table directly — the same technique WizTree uses —
-instead of walking folders. That's one mostly sequential read, and it skips
-the free parts of the MFT using `$MFT:$BITMAP`.
+在 NTFS 分区上（Windows，以及 Linux 的 `ntfs3`/`ntfs-3g` 挂载），MosaicDisk 直接读取主文件表（MFT）——与 WizTree 采用同样的方法——而不是逐层遍历目录。这只是一次基本顺序的读取，并通过 `$MFT:$BITMAP` 跳过 MFT 中的空闲部分。
 
-| 700k-entry NTFS USB hard disk, cold cache | time |
+| 70 万条目的 NTFS USB 硬盘，冷缓存 | 耗时 |
 |---|---|
-| Folder walk | 262 s |
-| MFT read | 17 s (disk-bound) |
-| Rescan, warm cache | 0.3–1 s |
+| 目录遍历 | 262 秒 |
+| MFT 读取 | 17 秒（受磁盘速度限制） |
+| 再次扫描，热缓存 | 0.3–1 秒 |
 
-On Linux, reading the raw device needs root. MosaicDisk asks for your
-password once per session and streams only the MFT through a small helper
-(`mosaicdisk --mft-dump DEV`). It can also install a udev rule that gives
-the logged-in user access to NTFS partitions (`uaccess`), after which no
-prompt is needed. When you scan a folder on a spinning NTFS disk, MosaicDisk
-walks it for up to 2 seconds and switches to the MFT if it turns out to be
-big.
+在 Linux 上读取裸设备需要 root 权限。MosaicDisk 每个会话只请求一次密码，并通过一个小助手程序只传输 MFT 内容（`mosaicdisk --mft-dump DEV`）。它还可以安装 udev 规则，让登录用户访问 NTFS 分区（`uaccess`），之后就不再需要提示。当你在机械 NTFS 硬盘上扫描某个文件夹时，MosaicDisk 会先遍历最多 2 秒，如果发现目录很大就切换到 MFT 方式。
 
-The headless CSV export was checked row for row against WizTree 4.33's own
-MFT scan of the same drive (700,604 rows). Sizes, allocated sizes (including
-alternate data streams), modification dates and attribute values all match.
+无头 CSV 导出已与 WizTree 4.33 对同一驱动器的 MFT 扫描逐行核对（700,604 行）。大小、分配大小（含备用数据流）、修改日期和属性值全部一致。
 
 ## 功能
 
@@ -48,7 +33,7 @@ alternate data streams), modification dates and attribute values all match.
 - **主题**：九套主题加自动、11 种强调色、十种矩形树图配色和自定义调色板
 - **多语言**：内置简体中文（默认跟随配置），也可在 exe 旁放置 `locale/<lang>/LC_MESSAGES/default.po` 添加语言
 
-![File view search](docs/screenshot-files.png)
+![文件视图搜索](docs/screenshot-files.png)
 
 ## 安装
 
@@ -69,8 +54,7 @@ cargo install --git https://github.com/zeno-ling/mosaicdisk
 
 `mimalloc` 是默认特性；用 `--no-default-features` 可改用系统分配器。
 
-设置保存在平台的配置目录。想要便携版，在 exe 旁放一个空的
-`mosaicdisk.json` 即可生效。
+设置保存在平台的配置目录。想要便携版，在 exe 旁放一个空的 `mosaicdisk.json` 即可生效。
 
 ## 命令行
 
@@ -83,24 +67,37 @@ mosaicdisk /home /treemapimagefile=home.png /treemapimagewidth=3840 /treemapimag
 
 运行 `mosaicdisk --help` 查看完整列表；`--name=value` 写法同样可用。
 
-## Development
+## 开发
 
 ```sh
 cargo test --release
-# Offscreen screenshots of every screen into target/snapshots:
+# 将所有界面的离屏截图输出到 target/snapshots：
 WT_SNAP_PATH=/usr cargo test --release snapshots -- --ignored
-# Timing of search / treemap / filter / duplicates:
+# 搜索 / 矩形树图 / 过滤 / 重复文件检测的耗时：
 WT_SNAP_PATH=$HOME cargo test --release bench_views -- --ignored --nocapture
 ```
 
-## License
+## 一键打包发布（Windows）
 
-[MIT](LICENSE). The bundled Inter font is under the SIL Open Font License;
-see [`assets/fonts/Inter-LICENSE.txt`](assets/fonts/Inter-LICENSE.txt).
+安装 [GitHub CLI](https://cli.github.com/) 并登录（`gh auth login`）后，在项目根目录运行：
 
-MosaicDisk is an independent project and isn't affiliated with or endorsed
-by WizTree or Antibody Software. "WizTree" is used only to describe
-compatibility.
+```powershell
+.\scripts\release.ps1
+```
 
-Based on [DiskMosaic](https://github.com/divyanshchandhok/diskmosaic) by
-Divyansh Chandhok (MIT).
+脚本会依次完成：编译 release 二进制 → 复制中文语言包与文档 → 生成 `MosaicDisk-<版本>-windows-x64.zip` → 创建或更新 GitHub Release 并上传资产（同名资产自动覆盖）。可用参数：
+
+```powershell
+.\scripts\release.ps1 -Version v0.1.0 -SkipBuild   # 跳过编译，用现有二进制重新打包
+.\scripts\release.ps1 -NoUpload                    # 只打包，不推送到 GitHub
+```
+
+版本号默认从 `Cargo.toml` 读取。
+
+## 许可证
+
+[MIT](LICENSE)。随附的 Inter 字体遵循 SIL Open Font License，详见 [`assets/fonts/Inter-LICENSE.txt`](assets/fonts/Inter-LICENSE.txt)。
+
+MosaicDisk 是独立项目，与 WizTree 或 Antibody Software 无关联，也未获其背书。"WizTree" 仅用于描述兼容性。
+
+基于 Divyansh Chandhok 的 [DiskMosaic](https://github.com/divyanshchandhok/diskmosaic)（MIT）构建。
