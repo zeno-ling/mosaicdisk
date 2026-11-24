@@ -619,3 +619,300 @@ msgstr "关闭"
 
 msgid "{} folder{} couldn't be read during the scan (permission denied). Their contents aren't included."
 msgstr "扫描时无法读取 {} 个文件夹（权限不足）。其内容未包含在结果中。"
+msgid "% of Parent"
+msgstr "占父级"
+
+msgid "Items"
+msgstr "项目数"
+
+msgid "Extension"
+msgstr "扩展名"
+
+msgid "File Type"
+msgstr "文件类型"
+
+msgid "Percent"
+msgstr "占比"
+
+msgid "TOTAL"
+msgstr "总计"
+
+msgid "FREE"
+msgstr "可用"
+
+msgid "RESERVED"
+msgstr "保留"
+
+msgid "Search files  (*.mp4, >1gb, !temp …)"
+msgstr "搜索文件  (*.mp4, >1gb, !temp …)"
+
+msgid "Don't show again"
+msgstr "不再显示"
+
+msgid "Show folders"
+msgstr "显示文件夹"
+msgid "Adobe Photoshop Image"
+msgstr "Adobe Photoshop 图像"
+
+msgid "Apple Disk Image"
+msgstr "Apple 磁盘映像"
+
+msgid "Apple Icon Image"
+msgstr "Apple 图标图像"
+
+msgid "Application Bundle"
+msgstr "应用程序包"
+
+msgid "Application Extension"
+msgstr "应用程序扩展"
+
+msgid "Application"
+msgstr "应用程序"
+
+msgid "Backup File"
+msgstr "备份文件"
+
+msgid "Binary File"
+msgstr "二进制文件"
+
+msgid "Bitmap Image"
+msgstr "位图图像"
+
+msgid "Cabinet File"
+msgstr "Cabinet 压缩包"
+
+msgid "Cache File"
+msgstr "缓存文件"
+
+msgid "Camera Raw Image"
+msgstr "相机 Raw 图像"
+
+msgid "Cascading Style Sheet"
+msgstr "CSS 样式表"
+
+msgid "Comma Separated Values File"
+msgstr "CSV 逗号分隔值文件"
+
+msgid "Compiled Python File"
+msgstr "Python 编译文件"
+
+msgid "Configuration Settings"
+msgstr "配置设置"
+
+msgid "Data File"
+msgstr "数据文件"
+
+msgid "Database File"
+msgstr "数据库文件"
+
+msgid "Debian Package"
+msgstr "Debian 软件包"
+
+msgid "Disc Image File"
+msgstr "光盘映像文件"
+
+msgid "Disk Image File"
+msgstr "磁盘映像文件"
+
+msgid "Dynamic Library"
+msgstr "动态库"
+
+msgid "File Type"
+msgstr "文件类型"
+
+msgid "File"
+msgstr "文件"
+
+msgid "Flash Video"
+msgstr "Flash 视频"
+
+msgid "Flatpak Bundle"
+msgstr "Flatpak 软件包"
+
+msgid "Game Data Package"
+msgstr "游戏数据包"
+
+msgid "Git Pack File"
+msgstr "Git 打包文件"
+
+msgid "Go Source File"
+msgstr "Go 源码文件"
+
+msgid "Icon"
+msgstr "图标"
+
+msgid "Index File"
+msgstr "索引文件"
+
+msgid "Installer Package"
+msgstr "安装程序包"
+
+msgid "Java Archive"
+msgstr "Java 归档 (JAR)"
+
+msgid "Java Class File"
+msgstr "Java 类文件"
+
+msgid "Java Source File"
+msgstr "Java 源码文件"
+
+msgid "Keynote Presentation"
+msgstr "Keynote 演示文稿"
+
+msgid "Lock File"
+msgstr "锁定文件"
+
+msgid "Log File"
+msgstr "日志文件"
+
+msgid "Markdown Document"
+msgstr "Markdown 文档"
+
+msgid "Matroska Video"
+msgstr "Matroska 视频"
+
+msgid "Microsoft Access Database"
+msgstr "Microsoft Access 数据库"
+
+msgid "Microsoft Excel Worksheet"
+msgstr "Microsoft Excel 表格"
+
+msgid "Microsoft PowerPoint Presentation"
+msgstr "Microsoft PowerPoint 演示文稿"
+
+msgid "Microsoft Word Document"
+msgstr "Microsoft Word 文档"
+
+msgid "Numbers Spreadsheet"
+msgstr "Numbers 表格"
+
+msgid "Object File"
+msgstr "目标文件"
+
+msgid "Ogg Audio File"
+msgstr "Ogg 音频"
+
+msgid "Opus Audio File"
+msgstr "Opus 音频"
+
+msgid "Outlook Data File"
+msgstr "Outlook 数据文件"
+
+msgid "Pages Document"
+msgstr "Pages 文档"
+
+msgid "Python Source File"
+msgstr "Python 源码文件"
+
+msgid "Rich Text Format"
+msgstr "RTF 富文本"
+
+msgid "Rust Library"
+msgstr "Rust 库"
+
+msgid "Rust Metadata"
+msgstr "Rust 元数据"
+
+msgid "Rust Source File"
+msgstr "Rust 源码文件"
+
+msgid "Shared Library"
+msgstr "共享库"
+
+msgid "Shell Script"
+msgstr "Shell 脚本"
+
+msgid "Static Library"
+msgstr "静态库"
+
+msgid "Swap File"
+msgstr "交换文件"
+
+msgid "System File"
+msgstr "系统文件"
+
+msgid "Tab Separated Values File"
+msgstr "TSV 制表符分隔文件"
+
+msgid "Tape Archive"
+msgstr "tar 归档"
+
+msgid "Temporary File"
+msgstr "临时文件"
+
+msgid "Text Document"
+msgstr "文本文档"
+
+msgid "Torrent File"
+msgstr "BT 种子文件"
+
+msgid "Valve Data File"
+msgstr "Valve 数据文件"
+
+msgid "Virtual Hard Disk"
+msgstr "虚拟硬盘"
+
+msgid "Wave Sound"
+msgstr "WAV 音频"
+
+msgid "Web Font"
+msgstr "网页字体"
+
+msgid "Windows Batch File"
+msgstr "Windows 批处理文件"
+
+msgid "Windows Installer Package"
+msgstr "Windows 安装程序包"
+
+msgid "Windows Media Audio File"
+msgstr "Windows Media 音频"
+
+msgid "Windows Media Video"
+msgstr "Windows Media 视频"
+
+msgid "Zstandard Archive"
+msgstr "Zstandard 压缩包"
+
+msgid "USED"
+msgstr "已用"
+
+
+msgid "Full Path"
+msgstr "完整路径"
+
+msgid "Folders"
+msgstr "文件夹"
+
+msgid "Max"
+msgstr "最多"
+
+msgid "All"
+msgstr "全部"
+
+msgid "Duplicates"
+msgstr "重复文件"
+
+msgid "Off"
+msgstr "关闭"
+
+msgid "Name + Size"
+msgstr "名称 + 大小"
+
+msgid "Name + Size + Date"
+msgstr "名称 + 大小 + 日期"
+
+msgid "Don't locate duplicates"
+msgstr "不查找重复文件"
+
+msgid "Locate by Name, Size"
+msgstr "按名称、大小查找"
+
+msgid "Locate by Name, Size, Date"
+msgstr "按名称、大小、日期查找"
+
+msgid "Duplicates only"
+msgstr "仅显示重复文件"
+
+msgid "files"
+msgstr "个文件"
+

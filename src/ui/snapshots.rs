@@ -33,6 +33,14 @@ fn shot(h: &mut Harness<'_, App>, name: &str) {
 #[ignore]
 fn snapshots() {
     let path = std::env::var("WT_SNAP_PATH").unwrap_or_else(|_| "/usr".into());
+    // Render the UI in a translated language (default zh_CN). Point
+    // MOSAICDISK_LOCALE_DIR at the repo's `locale/` folder (or ship `locale/`
+    // next to the test binary) so the catalogue can be found.
+    let lang = std::env::var("WT_SNAP_LANG").unwrap_or_else(|_| "zh_CN".into());
+    if !lang.is_empty() {
+        let ok = crate::i18n::load(&lang);
+        println!("i18n {lang}: {ok} (dir {:?})", crate::i18n::locale_dir());
+    }
     let mut h = Harness::builder()
         .with_size([1440.0, 900.0])
         .with_pixels_per_point(1.0)

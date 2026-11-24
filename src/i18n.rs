@@ -37,6 +37,13 @@ pub fn tr(s: &str) -> String {
 /// Directory searched for translations (the first that exists, else the
 /// one next to the executable).
 pub fn locale_dir() -> PathBuf {
+    // Override for tests, CI and portable setups.
+    if let Some(d) = std::env::var_os("MOSAICDISK_LOCALE_DIR") {
+        let p = PathBuf::from(d);
+        if p.is_dir() {
+            return p;
+        }
+    }
     let exe_dir = std::env::current_exe().ok().and_then(|p| p.parent().map(Path::to_path_buf));
     let mut cands = Vec::new();
     if let Some(d) = &exe_dir {

@@ -321,7 +321,7 @@ fn search_field(app: &mut App, ui: &mut Ui) {
         ui.fonts_mut(|f| f.layout_job(job))
     };
     let te = egui::TextEdit::singleline(&mut app.fv.query)
-        .hint_text("Search files  (*.mp4, >1gb, !temp …)")
+        .hint_text(tr("Search files  (*.mp4, >1gb, !temp …)"))
         .frame(egui::Frame::NONE)
         .font(theme::regular(13.0))
         .desired_width(te_rect.width())
@@ -537,19 +537,19 @@ pub fn header(app: &mut App, ui: &mut Ui) {
                 }
                 // Stats
                 let mut sx = rect.right() - stats_w;
-                let stats: Vec<(&str, String, String)> = vec![
-                    ("TOTAL", if vol.total > 0 { f.size(vol.total) } else { "n/a".into() }, String::new()),
+                let stats: Vec<(String, String, String)> = vec![
+                    (tr("TOTAL"), if vol.total > 0 { f.size(vol.total) } else { "n/a".into() }, String::new()),
                     (
-                        "USED",
+                        tr("USED"),
                         if vol.total > 0 { f.size(vol.used()) } else { "n/a".into() },
                         if vol.total > 0 { format!("{:.1}%", vol.used() as f64 / vol.total as f64 * 100.0) } else { String::new() },
                     ),
                     (
-                        "FREE",
+                        tr("FREE"),
                         if vol.total > 0 { f.size(vol.free) } else { "n/a".into() },
                         if vol.total > 0 { format!("{:.1}%", vol.free as f64 / vol.total as f64 * 100.0) } else { String::new() },
                     ),
-                    ("RESERVED", if vol.total > 0 { f.size(vol.reserved) } else { "n/a".into() }, String::new()),
+                    (tr("RESERVED"), if vol.total > 0 { f.size(vol.reserved) } else { "n/a".into() }, String::new()),
                 ];
                 let cw = stats_w / stats.len() as f32;
                 for (k, v, sub) in stats {
@@ -661,10 +661,10 @@ pub fn banners(app: &mut App, ui: &mut Ui) {
                                 }
                             }
                             if show_admin {
-                                if ui.add(egui::Button::new("Don't show again").frame(false)).clicked() {
+                                if ui.add(egui::Button::new(tr("Don't show again")).frame(false)).clicked() {
                                     app.s.dont_show_admin_warning = true;
                                 }
-                            } else if ui.add(egui::Button::new("Show folders").frame(false)).clicked() {
+                            } else if ui.add(egui::Button::new(tr("Show folders")).frame(false)).clicked() {
                                 app.dlg.denied = true;
                             }
                             if ghost_button(ui, &pal, "Restart as Administrator").clicked() {

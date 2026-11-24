@@ -2,7 +2,7 @@
 
 pub fn describe(ext: &str) -> String {
     if ext.is_empty() {
-        return "File".to_string();
+        return crate::i18n::tr("File");
     }
     let known = match ext {
         "txt" | "text" => "Text Document",
@@ -128,8 +128,8 @@ pub fn describe(ext: &str) -> String {
         _ => "",
     };
     if known.is_empty() {
-        format!("{} File", ext.to_uppercase())
+        format!("{} {}", ext.to_uppercase(), crate::i18n::tr("File"))
     } else {
-        known.to_string()
+        crate::i18n::tr(known)
     }
 }

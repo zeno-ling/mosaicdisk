@@ -5,6 +5,7 @@ use super::{App, Cmd, chrome, icons, tree_view};
 use crate::config::{DupMode, Settings};
 use crate::filter::{DupInfo, Matcher};
 use crate::format;
+use crate::i18n::tr;
 use crate::model::{NodeId, Tree, NONE};
 use crate::theme;
 use eframe::egui::{self, Color32, CornerRadius, Id, Pos2, RichText, Stroke, Ui, Vec2};
@@ -249,30 +250,30 @@ fn options_bar(app: &mut App, ui: &mut Ui) {
     let pal = app.pal;
     ui.spacing_mut().item_spacing.x = 14.0;
     let mut mp = app.s.match_path;
-    if chrome::segmented(ui, &pal, &mut mp, &[(false, "Name"), (true, "Full Path")]) {
+    if chrome::segmented(ui, &pal, &mut mp, &[(false, &tr("Name")), (true, &tr("Full Path"))]) {
         app.s.match_path = mp;
     }
-    ui.checkbox(&mut app.s.show_folders_in_files, "Folders");
-    ui.label(RichText::new("Max").color(pal.text2));
-    let label = if app.s.max_files == 0 { "All".to_string() } else { format::thousands(app.s.max_files as u64) };
+    ui.checkbox(&mut app.s.show_folders_in_files, tr("Folders"));
+    ui.label(RichText::new(tr("Max")).color(pal.text2));
+    let label = if app.s.max_files == 0 { tr("All").to_string() } else { format::thousands(app.s.max_files as u64) };
     egui::ComboBox::from_id_salt("maxfiles").selected_text(label).width(84.0).show_ui(ui, |ui| {
         for v in [100usize, 1000, 10_000, 100_000, 1_000_000, 0] {
-            let l = if v == 0 { "All".to_string() } else { format::thousands(v as u64) };
+            let l = if v == 0 { tr("All").to_string() } else { format::thousands(v as u64) };
             ui.selectable_value(&mut app.s.max_files, v, l);
         }
     });
-    ui.label(RichText::new("Duplicates").color(pal.text2));
+    ui.label(RichText::new(tr("Duplicates")).color(pal.text2));
     let dl = match app.s.dup_mode {
-        DupMode::Off => "Off",
-        DupMode::NameSize => "Name + Size",
-        DupMode::NameSizeDate => "Name + Size + Date",
+        DupMode::Off => tr("Off"),
+        DupMode::NameSize => tr("Name + Size"),
+        DupMode::NameSizeDate => tr("Name + Size + Date"),
     };
     egui::ComboBox::from_id_salt("dupmode").selected_text(dl).width(150.0).show_ui(ui, |ui| {
-        ui.selectable_value(&mut app.s.dup_mode, DupMode::Off, "Don't locate duplicates");
-        ui.selectable_value(&mut app.s.dup_mode, DupMode::NameSize, "Locate by Name, Size");
-        ui.selectable_value(&mut app.s.dup_mode, DupMode::NameSizeDate, "Locate by Name, Size, Date");
+        ui.selectable_value(&mut app.s.dup_mode, DupMode::Off, tr("Don't locate duplicates"));
+        ui.selectable_value(&mut app.s.dup_mode, DupMode::NameSize, tr("Locate by Name, Size"));
+        ui.selectable_value(&mut app.s.dup_mode, DupMode::NameSizeDate, tr("Locate by Name, Size, Date"));
     });
-    ui.add_enabled(app.s.dup_mode != DupMode::Off, egui::Checkbox::new(&mut app.s.dups_only, "Duplicates only"));
+    ui.add_enabled(app.s.dup_mode != DupMode::Off, egui::Checkbox::new(&mut app.s.dups_only, tr("Duplicates only")));
     ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
         if !app.fv.query.is_empty() && chrome::ghost_button(ui, &pal, "Clear").clicked() {
             app.fv.query.clear();
@@ -280,9 +281,9 @@ fn options_bar(app: &mut App, ui: &mut Ui) {
         }
         let shown = app.fv.results.len();
         let txt = if shown < app.fv.total {
-            format!("{} of {} · {:.0} ms", format::thousands(shown as u64), format::thousands(app.fv.total as u64), app.fv.search_ms)
+            format!("{} / {} · {:.0} ms", format::thousands(shown as u64), format::thousands(app.fv.total as u64), app.fv.search_ms)
         } else {
-            format!("{} files · {:.0} ms", format::thousands(app.fv.total as u64), app.fv.search_ms)
+            format!("{} {} · {:.0} ms", format::thousands(app.fv.total as u64), tr("files"), app.fv.search_ms)
         };
         ui.label(RichText::new(txt).color(pal.text3).font(theme::regular(11.5)));
     });
