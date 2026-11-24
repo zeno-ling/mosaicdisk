@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 # MosaicDisk 一键打包发布脚本（Linux / macOS）
-# 用法：./scripts/release.sh [-v v0.1.0] [-r owner/repo] [-s] [-n]
+# 用法：./scripts/release.sh [-v v0.1.0] [-r owner/repo] [-s] [-n] [-t target] [-a arch]
 #   -v  指定版本（默认从 Cargo.toml 读取）
 #   -r  GitHub 仓库（默认 zeno-ling/mosaicdisk）
 #   -s  跳过编译，用现有二进制打包
 #   -n  只打包，不上传 GitHub Release
+#   -t  Rust target triple（交叉编译，如 x86_64-apple-darwin）
+#   -a  覆盖架构名（如 x64），用于 uname 与 target 不一致时
 
 set -euo pipefail
 
@@ -13,14 +15,18 @@ REPO="zeno-ling/mosaicdisk"
 VERSION=""
 SKIP_BUILD=0
 NO_UPLOAD=0
+TARGET=""
+ARCH_OVERRIDE=""
 
-while getopts "v:r:sn" opt; do
+while getopts "v:r:st:a:n" opt; do
     case "$opt" in
         v) VERSION="$OPTARG" ;;
         r) REPO="$OPTARG" ;;
         s) SKIP_BUILD=1 ;;
+        t) TARGET="$OPTARG" ;;
+        a) ARCH_OVERRIDE="$OPTARG" ;;
         n) NO_UPLOAD=1 ;;
-        *) echo "用法: $0 [-v 版本] [-r 仓库] [-s 跳过编译] [-n 只打包]" >&2; exit 1 ;;
+        *) echo "用法: $0 [-v 版本] [-r 仓库] [-s 跳过编译] [-n 只打包] [-t target] [-a 架构]" >&2; exit 1 ;;
     esac
 done
 
@@ -50,6 +56,9 @@ case "$ARCH_RAW" in
     aarch64|arm64) ARCH="arm64" ;;
     *) ARCH="$ARCH_RAW" ;;
 esac
+if [[ -n "$ARCH_OVERRIDE" ]]; then
+    ARCH="$ARCH_OVERRIDE"
+fi
 TAR_NAME="MosaicDisk-$VER-$OS-$ARCH.tar.gz"
 
 echo "== MosaicDisk 发布打包 $TAG ($OS-$ARCH) =="
@@ -57,10 +66,18 @@ echo "== MosaicDisk 发布打包 $TAG ($OS-$ARCH) =="
 # 3) 编译
 if [[ "$SKIP_BUILD" -eq 0 ]]; then
     echo "编译 release（--no-default-features 使用系统分配器）..."
-    cargo build --release --no-default-features
+    if [[ -n "$TARGET" ]]; then
+        cargo build --release --no-default-features --target "$TARGET"
+    else
+        cargo build --release --no-default-features
+    fi
 fi
 
-BIN="target/release/mosaicdisk"
+if [[ -n "$TARGET" ]]; then
+    BIN="target/$TARGET/release/mosaicdisk"
+else
+    BIN="target/release/mosaicdisk"
+fi
 if [[ ! -f "$BIN" ]]; then
     echo "错误: 找不到 $BIN，请先编译" >&2
     exit 1
