@@ -25,8 +25,3 @@ jobs:
         with:
           name: macos-arm64
           path: target/MosaicDisk-*-macos-arm64.tar.gz
-
-      - name: Upload to GitHub Release
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: bash scripts/release.sh -s -r "${{ github.repository }}"
