@@ -35,7 +35,25 @@
 
 ![文件视图搜索](docs/screenshot-files.png)
 
-## 安装
+## 下载预编译版
+
+无需安装 Rust，从 [v0.1.0 Release](https://github.com/zeno-ling/mosaicdisk/releases/tag/v0.1.0) 直接下载对应平台的绿色版，解压即用（内置简体中文语言包）：
+
+| 平台 | 架构 | 文件 |
+|---|---|---|
+| Windows | x86_64 | [MosaicDisk-0.1.0-windows-x64.zip](https://github.com/zeno-ling/mosaicdisk/releases/download/v0.1.0/MosaicDisk-0.1.0-windows-x64.zip) |
+| Linux | x86_64 | [MosaicDisk-0.1.0-linux-x64.tar.gz](https://github.com/zeno-ling/mosaicdisk/releases/download/v0.1.0/MosaicDisk-0.1.0-linux-x64.tar.gz) |
+| macOS | Apple Silicon (arm64) | [MosaicDisk-0.1.0-macos-arm64.tar.gz](https://github.com/zeno-ling/mosaicdisk/releases/download/v0.1.0/MosaicDisk-0.1.0-macos-arm64.tar.gz) |
+| macOS | Intel (x86_64) | [MosaicDisk-0.1.0-macos-x64.tar.gz](https://github.com/zeno-ling/mosaicdisk/releases/download/v0.1.0/MosaicDisk-0.1.0-macos-x64.tar.gz) |
+
+在 Linux / macOS 上解压后运行：
+
+```sh
+tar -xzf MosaicDisk-0.1.0-*.tar.gz
+./mosaicdisk
+```
+
+## 从源码安装
 
 需要较新的 Rust stable 工具链（edition 2024，即 Rust 1.85+）。
 
@@ -99,6 +117,13 @@ Linux / macOS 用对应的 shell 脚本，产物为 `MosaicDisk-<版本>-<系统
 ```sh
 ./scripts/release.sh              # 编译、打包并发布
 ./scripts/release.sh -s -n        # 跳过编译，只打包不上传
+```
+
+交叉编译时可用 `-t` 指定 Rust target、`-a` 覆盖产物架构名，例如从 Apple Silicon 构建 Intel Mac 版：
+
+```sh
+cargo build --release --no-default-features --target x86_64-apple-darwin
+./scripts/release.sh -s -n -t x86_64-apple-darwin -a x64
 ```
 
 ## 许可证
