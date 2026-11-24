@@ -288,7 +288,7 @@ pub fn toolbar(app: &mut App, ui: &mut Ui) {
                 }
                 ui.add_space(8.0);
                 let mut tab = app.tab;
-                if segmented(ui, &pal, &mut tab, &[(Tab::Tree, "Tree View"), (Tab::Files, "File View"), (Tab::About, "About")]) {
+                if segmented(ui, &pal, &mut tab, &[(Tab::Tree, "Tree View"), (Tab::Files, "File View"), (Tab::Duplicates, "Duplicates"), (Tab::About, "About")]) {
                     app.tab = tab;
                 }
                 ui.with_layout(Layout::right_to_left(Align::Center), |ui| {

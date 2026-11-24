@@ -91,6 +91,10 @@ fn snapshots() {
         shot(&mut h, "files_dark");
         h.state_mut().s.theme = "Porcelain".into();
     }
+    if want("duplicates") {
+        h.state_mut().tab = Tab::Duplicates;
+        shot(&mut h, "duplicates");
+    }
     if want("about") {
         h.state_mut().tab = Tab::About;
         shot(&mut h, "about");

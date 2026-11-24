@@ -31,6 +31,8 @@ png = "0.18"
 mimalloc = { version = "0.1", default-features = false, optional = true }
 memchr = "2"
 regex = "1"
+twox-hash = { version = "2", features = ["xxhash3_64", "std", "alloc"] }
+blake3 = { version = "1", features = ["pure"] }
 
 [target.'cfg(unix)'.dependencies]
 libc = "0.2"

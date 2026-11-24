@@ -75,6 +75,8 @@ pub struct Settings {
     pub show_folders_in_files: bool,
     pub dup_mode: DupMode,
     pub dups_only: bool,
+    /// Minimum file size (bytes) for content-based duplicate search.
+    pub dup_min_size: u64,
     pub search_history: Vec<String>,
 
     // Filter
@@ -214,6 +216,7 @@ impl Default for Settings {
             show_folders_in_files: false,
             dup_mode: DupMode::Off,
             dups_only: false,
+            dup_min_size: 1024 * 1024,
             search_history: Vec::new(),
             include_filter: String::new(),
             exclude_filter: String::new(),
@@ -249,7 +252,7 @@ impl Default for Settings {
 }
 
 /// 2: folders show the newest file date below them by default (as WizTree).
-pub const SETTINGS_VERSION: u32 = 3;
+pub const SETTINGS_VERSION: u32 = 4;
 
 /// Default UI language for fresh installs ( Simplified Chinese ).
 fn default_language() -> String {
@@ -287,6 +290,11 @@ impl Settings {
     }
 
     pub fn fix(&mut self) {
+        // v4: content-based duplicate search ignores files below 1 MB.
+        // serde fills in the default for old settings files that lack the key.
+        if self.dup_min_size == 0 {
+            self.dup_min_size = 1024 * 1024;
+        }
         // v3 (our rebrand): fresh/old installs default to Simplified Chinese
         // unless the user has explicitly picked another language. An empty
         // `language` used to mean "English built-in"; keep honouring it only

@@ -1,6 +1,7 @@
 //! The desktop application: state, commands and the main frame.
 
 mod chrome;
+mod duplicates_view;
 pub mod dialogs;
 mod file_view;
 pub mod grid;
@@ -49,6 +50,7 @@ impl Source {
 pub enum Tab {
     Tree,
     Files,
+    Duplicates,
     About,
 }
 
@@ -57,6 +59,9 @@ pub enum Tab {
 pub enum Cmd {
     Scan,
     Cancel,
+    FindDuplicates,
+    CancelDuplicates,
+    DeleteDuplicates,
     SelectFolder,
     SelectMultiple,
     SelectCsv,
@@ -110,6 +115,11 @@ pub struct ScanJob {
     pub source: Source,
 }
 
+pub struct DupJob {
+    pub progress: Arc<crate::duplicates::DupProgress>,
+    pub rx: crossbeam_channel::Receiver<crate::duplicates::DupResult>,
+}
+
 pub struct Msg {
     pub title: String,
     pub body: String,
@@ -132,6 +142,8 @@ pub struct App {
     /// Unfiltered tree while a scan-result filter is applied.
     pub base_tree: Option<Tree>,
     pub scan: Option<ScanJob>,
+    pub dup_job: Option<DupJob>,
+    pub dup_view: duplicates_view::DupViewState,
     pub status: String,
     pub last_elapsed: Option<f64>,
     pub tab: Tab,
@@ -208,6 +220,8 @@ impl App {
             tree: None,
             base_tree: None,
             scan: None,
+            dup_job: None,
+            dup_view: duplicates_view::DupViewState::default(),
             status: "Ready".into(),
             last_elapsed: None,
             tab: Tab::Tree,
@@ -329,6 +343,67 @@ impl App {
     pub fn cancel_scan(&mut self) {
         if let Some(j) = &self.scan {
             j.progress.cancel.store(true, Ordering::Relaxed);
+        }
+    }
+
+    // ------------------------------------------------------- duplicate search
+
+    pub fn start_dup_search(&mut self) {
+        if self.dup_job.is_some() {
+            return;
+        }
+        let Some(t) = &self.tree else { return };
+        // Snapshot the candidate NodeIds + paths + sizes so the worker thread
+        // never borrows the Tree. Rebuild a lightweight Tree with real paths.
+        let snapshot = t.clone();
+        let min_size = self.s.dup_min_size;
+        let progress = Arc::new(crate::duplicates::DupProgress::default());
+        let (tx, rx) = crossbeam_channel::bounded(1);
+        let p2 = progress.clone();
+        std::thread::Builder::new()
+            .name("dupscan".into())
+            .spawn(move || {
+                let res = crate::duplicates::find_duplicates(&snapshot, min_size, p2);
+                let _ = tx.send(res);
+            })
+            .expect("spawn duplicate scan thread");
+        self.dup_job = Some(DupJob { progress, rx });
+        self.dup_view.clear();
+        self.status = crate::i18n::tr("Finding duplicates…").into();
+    }
+
+    pub fn cancel_dup_search(&mut self) {
+        if let Some(j) = &self.dup_job {
+            j.progress.cancel.store(true, Ordering::Relaxed);
+        }
+    }
+
+    fn poll_dup(&mut self, ctx: &egui::Context) {
+        let Some(job) = &self.dup_job else { return };
+        match job.rx.try_recv() {
+            Ok(res) => {
+                self.dup_job = None;
+                if res.cancelled {
+                    self.status = crate::i18n::tr("Duplicate search canceled.").into();
+                    return;
+                }
+                let groups = res.groups.len();
+                self.dup_view.set_groups(res.groups);
+                self.status = format!(
+                    "{} {} · {:.2} {}",
+                    crate::i18n::tr("Found"),
+                    crate::format::thousands(groups as u64),
+                    res.elapsed,
+                    crate::i18n::tr("seconds")
+                )
+                .into();
+            }
+            Err(crossbeam_channel::TryRecvError::Empty) => {
+                ctx.request_repaint_after(std::time::Duration::from_millis(60));
+            }
+            Err(_) => {
+                self.dup_job = None;
+            }
         }
     }
 
@@ -484,6 +559,11 @@ impl App {
                 v.sort_unstable();
                 v
             }
+            Tab::Duplicates => {
+                let mut v: Vec<NodeId> = self.dup_view.checked.iter().copied().collect();
+                v.sort_unstable();
+                v
+            }
             _ => self.sel.clone(),
         }
     }
@@ -515,6 +595,23 @@ impl App {
         match cmd {
             Cmd::Scan => self.start_scan(),
             Cmd::Cancel => self.cancel_scan(),
+            Cmd::FindDuplicates => self.start_dup_search(),
+            Cmd::CancelDuplicates => self.cancel_dup_search(),
+            Cmd::DeleteDuplicates => {
+                let ids: Vec<NodeId> = self.dup_view.checked.iter().copied().collect();
+                if !ids.is_empty() {
+                    self.delete_now(ids, false);
+                    let old_groups = std::mem::take(&mut self.dup_view.groups);
+                    let kept: Vec<_> = old_groups
+                        .into_iter()
+                        .filter_map(|mut g| {
+                            g.files.retain(|id| !self.tree.as_ref().unwrap().nodes[*id as usize].is_deleted());
+                            (g.files.len() >= 2).then_some(g)
+                        })
+                        .collect();
+                    self.dup_view.set_groups(kept);
+                }
+            }
             Cmd::SelectFolder => {
                 if let Some(p) = rfd::FileDialog::new().set_title("Select Folder").pick_folder() {
                     self.set_source(Source::Folder(p));
@@ -986,6 +1083,7 @@ impl eframe::App for App {
         let ctx = ui.ctx().clone();
         self.update_style(&ctx);
         self.poll_scan(&ctx);
+        self.poll_dup(&ctx);
         if let Some(m) = &mut self.monitor {
             if let Some(t) = &mut self.tree {
                 if m.apply(t) {
@@ -1033,6 +1131,13 @@ impl eframe::App for App {
                         Tab::Files => {
                             if self.tree.is_some() {
                                 file_view::show(self, &mut cui);
+                            } else {
+                                chrome::empty_state(self, &mut cui);
+                            }
+                        }
+                        Tab::Duplicates => {
+                            if self.tree.is_some() {
+                                duplicates_view::show(self, &mut cui);
                             } else {
                                 chrome::empty_state(self, &mut cui);
                             }

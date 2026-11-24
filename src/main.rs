@@ -7,6 +7,7 @@ static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
 mod actions;
 mod config;
 mod csvio;
+mod duplicates;
 mod filetypes;
 mod filter;
 mod format;

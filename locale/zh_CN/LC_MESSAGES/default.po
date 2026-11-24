@@ -916,3 +916,42 @@ msgstr "仅显示重复文件"
 msgid "files"
 msgstr "个文件"
 
+msgid "Minimum file size"
+msgstr "最小文件大小"
+
+msgid "Preparing…"
+msgstr "准备中…"
+
+msgid "groups"
+msgstr "组"
+
+msgid "reclaimable"
+msgstr "可释放"
+
+msgid "No duplicate groups found yet"
+msgstr "尚未找到重复文件组"
+
+msgid "Click Find Duplicates to scan the current results by file content."
+msgstr "点击「查找重复文件」按文件内容扫描当前结果。"
+
+msgid "each"
+msgstr "每个"
+
+msgid "keep"
+msgstr "保留"
+
+msgid "Group of identical files"
+msgstr "内容相同的文件组"
+
+msgid "Find Duplicates"
+msgstr "查找重复文件"
+
+msgid "Finding duplicates…"
+msgstr "正在查找重复文件…"
+
+msgid "Duplicate search canceled."
+msgstr "重复文件查找已取消。"
+
+msgid "Found"
+msgstr "找到"
+
