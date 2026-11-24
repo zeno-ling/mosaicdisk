@@ -29,11 +29,8 @@ def draw_icon(size: int) -> Image.Image:
     return img.resize((size, size), Image.LANCZOS)
 
 
-frames = [draw_icon(sz) for sz in SIZES]
-frames[0].save(
-    OUT,
-    format="ICO",
-    sizes=[(sz, sz) for sz in SIZES],
-    append_images=frames[1:],
-)
+# Pillow 的 ICO 插件以主图（最大尺寸）为基准，按 sizes 逐档缩放生成各条目。
+# 旧写法把 16x16 当主图并传 append_images，结果只写入了单个 16x16 条目。
+base = draw_icon(max(SIZES))
+base.save(OUT, format="ICO", sizes=[(sz, sz) for sz in SIZES])
 print(f"生成 {OUT} ({OUT.stat().st_size} 字节, 尺寸 {SIZES})")

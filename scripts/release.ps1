@@ -58,6 +58,7 @@ try {
     New-Item -ItemType Directory -Path $stage -Force | Out-Null
 
     Copy-Item $exe (Join-Path $stage "mosaicdisk.exe") -Force
+    Copy-Item (Join-Path $root "assets\app_icon.ico") (Join-Path $stage "app_icon.ico") -Force
     Copy-Item (Join-Path $root "locale") (Join-Path $stage "locale") -Recurse -Force
     Copy-Item (Join-Path $root "README.md") (Join-Path $stage "README.md") -Force
     Copy-Item (Join-Path $root "LICENSE") (Join-Path $stage "LICENSE") -Force
