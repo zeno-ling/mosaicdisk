@@ -94,6 +94,13 @@ WT_SNAP_PATH=$HOME cargo test --release bench_views -- --ignored --nocapture
 
 版本号默认从 `Cargo.toml` 读取。
 
+Linux / macOS 用对应的 shell 脚本，产物为 `MosaicDisk-<版本>-<系统>-<架构>.tar.gz`：
+
+```sh
+./scripts/release.sh              # 编译、打包并发布
+./scripts/release.sh -s -n        # 跳过编译，只打包不上传
+```
+
 ## 许可证
 
 [MIT](LICENSE)。随附的 Inter 字体遵循 SIL Open Font License，详见 [`assets/fonts/Inter-LICENSE.txt`](assets/fonts/Inter-LICENSE.txt)。
