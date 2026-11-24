@@ -6,7 +6,8 @@ param(
     [string]$Repo = "zeno-ling/mosaicdisk",
     [string]$MingwBin = "",
     [switch]$SkipBuild,
-    [switch]$NoUpload
+    [switch]$NoUpload,
+    [switch]$NoInstaller
 )
 
 $ErrorActionPreference = "Stop"
@@ -72,6 +73,23 @@ try {
     $size = (Get-Item $zip).Length
     Write-Host "已生成 $zipName（$([math]::Round($size / 1MB, 2)) MB）" -ForegroundColor Green
 
+    # 4b) 编译 Inno Setup 安装程序（ISCC 在 PATH 中，未安装则跳过）
+    $setupPath = $null
+    if (-not $NoInstaller) {
+        $iscc = Get-Command ISCC.exe -ErrorAction SilentlyContinue
+        if ($iscc) {
+            Write-Host "编译 Inno Setup 安装程序..."
+            & $iscc.Source (Join-Path $root "installer.iss") "/dAppVersion=$ver" 2>&1 | Select-Object -Last 3
+            if ($LASTEXITCODE -ne 0) { Fail "ISCC 编译失败（exit $LASTEXITCODE）" }
+            $setupName = "MosaicDisk-$ver-windows-x64-setup.exe"
+            $setupPath = Join-Path $root "target\$setupName"
+            if (-not (Test-Path $setupPath)) { Fail "找不到生成的安装程序 $setupPath" }
+            Write-Host "已生成 $setupName（$([math]::Round((Get-Item $setupPath).Length / 1MB, 2)) MB）" -ForegroundColor Green
+        } else {
+            Write-Host "未找到 ISCC，跳过安装程序编译（可安装 scoop install inno-setup）" -ForegroundColor Yellow
+        }
+    }
+
     # 5) 上传 GitHub Release
     if (-not $NoUpload) {
         $gh = Get-Command gh -ErrorAction SilentlyContinue
@@ -83,13 +101,15 @@ try {
         gh release view $tag --repo $Repo 2>&1 | Out-Null
         if ($LASTEXITCODE -eq 0) { $exists = $true }
 
+        $assets = @($zip)
+        if ($setupPath) { $assets += $setupPath }
         if ($exists) {
             Write-Host "Release $tag 已存在，覆盖上传资产..."
-            gh release upload $tag $zip --repo $Repo --clobber
+            gh release upload $tag @assets --repo $Repo --clobber
         } else {
             Write-Host "创建 Release $tag 并上传资产..."
             $notes = "MosaicDisk $ver — Windows x64 绿色版，解压即用。`n`n内置简体中文界面，直接读取 NTFS MFT，附带矩形树图与文件搜索。"
-            gh release create $tag $zip --repo $Repo --title "MosaicDisk $ver — Windows x64" --notes $notes
+            gh release create $tag @assets --repo $Repo --title "MosaicDisk $ver — Windows x64" --notes $notes
         }
         if ($LASTEXITCODE -ne 0) { Fail "gh release 上传失败（exit $LASTEXITCODE）" }
         Write-Host "发布完成：https://github.com/$Repo/releases/tag/$tag" -ForegroundColor Green

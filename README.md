@@ -41,7 +41,8 @@
 
 | 平台 | 架构 | 文件 |
 |---|---|---|
-| Windows | x86_64 | [MosaicDisk-0.1.0-windows-x64.zip](https://github.com/zeno-ling/mosaicdisk/releases/download/v0.1.0/MosaicDisk-0.1.0-windows-x64.zip) |
+| Windows | x86_64 | [安装包 MosaicDisk-0.1.0-windows-x64-setup.exe](https://github.com/zeno-ling/mosaicdisk/releases/download/v0.1.0/MosaicDisk-0.1.0-windows-x64-setup.exe)（可选开始菜单/桌面快捷方式与文件夹右键菜单） |
+| Windows | x86_64 | 绿色版 [MosaicDisk-0.1.0-windows-x64.zip](https://github.com/zeno-ling/mosaicdisk/releases/download/v0.1.0/MosaicDisk-0.1.0-windows-x64.zip) |
 | Linux | x86_64 | [MosaicDisk-0.1.0-linux-x64.tar.gz](https://github.com/zeno-ling/mosaicdisk/releases/download/v0.1.0/MosaicDisk-0.1.0-linux-x64.tar.gz) |
 | macOS | Apple Silicon (arm64) | [MosaicDisk-0.1.0-macos-arm64.tar.gz](https://github.com/zeno-ling/mosaicdisk/releases/download/v0.1.0/MosaicDisk-0.1.0-macos-arm64.tar.gz) |
 | macOS | Intel (x86_64) | [MosaicDisk-0.1.0-macos-x64.tar.gz](https://github.com/zeno-ling/mosaicdisk/releases/download/v0.1.0/MosaicDisk-0.1.0-macos-x64.tar.gz) |
@@ -103,11 +104,18 @@ WT_SNAP_PATH=$HOME cargo test --release bench_views -- --ignored --nocapture
 .\scripts\release.ps1
 ```
 
-脚本会依次完成：编译 release 二进制 → 复制中文语言包与文档 → 生成 `MosaicDisk-<版本>-windows-x64.zip` → 创建或更新 GitHub Release 并上传资产（同名资产自动覆盖）。可用参数：
+脚本会依次完成：编译 release 二进制 → 复制中文语言包与文档 → 生成绿色版 `MosaicDisk-<版本>-windows-x64.zip` → 用 Inno Setup 编译安装程序 `MosaicDisk-<版本>-windows-x64-setup.exe` → 创建或更新 GitHub Release 并上传资产（同名资产自动覆盖）。安装程序需要 [Inno Setup](https://jrsoftware.org/isinfo.php)（`scoop install inno-setup`）；未安装时自动跳过，可用 `-NoInstaller` 显式跳过。可用参数：
 
 ```powershell
 .\scripts\release.ps1 -Version v0.1.0 -SkipBuild   # 跳过编译，用现有二进制重新打包
 .\scripts\release.ps1 -NoUpload                    # 只打包，不推送到 GitHub
+.\scripts\release.ps1 -NoInstaller                 # 不编译安装程序，只打 zip
+```
+
+安装程序图标由 `assets/icon.svg` 的设计参数生成：
+
+```sh
+python scripts/gen_icon.py   # 生成 assets/app_icon.ico（需 Pillow）
 ```
 
 版本号默认从 `Cargo.toml` 读取。
