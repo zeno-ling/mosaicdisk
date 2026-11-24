@@ -2,6 +2,8 @@
 
 # MosaicDisk
 
+[![CI](https://github.com/zeno-ling/mosaicdisk/actions/workflows/ci.yml/badge.svg)](https://github.com/zeno-ling/mosaicdisk/actions/workflows/ci.yml)
+
 一款用 Rust 编写的快速磁盘空间分析器，支持 Windows、Linux 和 macOS。
 参照 [WizTree](https://diskanalyzer.com) 设计：一次快速扫描，随后树视图、软垫矩形树图和可搜索文件列表都能即时响应。
 
