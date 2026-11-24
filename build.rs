@@ -24,6 +24,9 @@ fn main() {
 
     let compiler = std::env::var("WINDRES").unwrap_or_else(|_| "windres".into());
     let res = std::path::Path::new(&out).join("app_icon.res");
+    // windres is optional: CI (MSVC toolchain) and contributors without MinGW
+    // can still build. The icon is embedded only when a working windres is
+    // available; release packaging always provides one via PATH/WINDRES.
     let status = std::process::Command::new(&compiler)
         .arg("-i")
         .arg(&rc)
@@ -31,9 +34,10 @@ fn main() {
         .arg(&res)
         .arg("-O")
         .arg("coff")
-        .status()
-        .unwrap_or_else(|e| panic!("failed to run {}: {}", compiler, e));
-    assert!(status.success(), "windres failed");
-
-    println!("cargo:rustc-link-arg={}", res.display());
+        .status();
+    match status {
+        Ok(s) if s.success() => println!("cargo:rustc-link-arg={}", res.display()),
+        Ok(s) => println!("cargo:warning=windres exited with {s}; skipping PE icon embedding"),
+        Err(e) => println!("cargo:warning=windres unavailable ({e}); skipping PE icon embedding (set WINDRES to its path to embed)"),
+    }
 }
